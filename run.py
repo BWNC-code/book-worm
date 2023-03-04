@@ -37,10 +37,15 @@ def add_book():
     fields = ["Title", "Author", "Year (optional)", "Genre"]
     book = []
     
-    for field in fields:
+    for i, field in enumerate(fields):
         while True:
             value = input(f"{field}: ")
-            if len(value) >= 2 and value.isalnum():
+            if i == 2 and value and not value.isdigit():
+                print("Invalid year. Please enter digits only.")
+            elif i == 2 and value == "":
+                book.append("")
+                break
+            elif len(value) >= 2 and value.replace(" ", "").isalnum():
                 book.append(value)
                 break
             else:
