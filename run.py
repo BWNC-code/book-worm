@@ -1,4 +1,5 @@
 # import required libraries
+import time
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -61,6 +62,7 @@ def add_book():
     # add the book to the sheet
     SHEET.append_row(book)
     print("Book added successfully!")
+    time.sleep(2)
 
 
 def remove_book():
@@ -78,9 +80,11 @@ def remove_book():
             # remove the book from the sheet
             SHEET.delete_rows(cell.row)
             print("Book removed successfully!")
+            time.sleep(2)
             return
         except AttributeError:
             print("The book is not in the database. Please try again.")
+            time.sleep(2)
 
 
 # define the main function
