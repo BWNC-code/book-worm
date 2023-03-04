@@ -57,14 +57,23 @@ def add_book():
 
 # define the remove_book function
 def remove_book():
+    """
+    Remove book from database
+    """
     title = input("Enter the title of the book you want to remove: ")
     # add input validation 
-    # find the book in the sheet
-    cell = SHEET.find(title)
-    # remove the book from the sheet
-    SHEET.delete_rows(cell.row)
-    print("Book removed successfully!")
+    while not title.replace(" ", "").isalnum() or len(title) < 2:
+        title = input("Please enter a valid book title: ")
 
+    # input validation to check if the book exists
+    try:
+        cell = SHEET.find(title)
+        # remove the book from the sheet
+        SHEET.delete_rows(cell.row)
+        print("Book removed successfully!")
+    except AttributeError:
+        print(f"The book with title '{title}' does not exist in the database.")
+    
 # define the main function
 def main():
     while True:
