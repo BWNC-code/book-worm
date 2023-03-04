@@ -19,6 +19,15 @@ CLIENT = gspread.authorize(SCOPED_CREDS)
 # get the instance of the Spreadsheet
 SHEET = CLIENT.open('book_worm').sheet1
 
+# define the main menu function
+def main_menu():
+    print("Welcome to Book Inventory!")
+    print("Please select an option below:")
+    print("1. Add a book")
+    print("2. Quit")
+    choice = input("Enter your choice: ")
+    return choice
+
 # define the add_book function
 def add_book():
     """
@@ -36,4 +45,19 @@ def add_book():
     print("Book added successfully!")
 
 
-add_book()
+# define the main function
+def main():
+    while True:
+        choice = main_menu()
+        if choice == '1':
+            add_book()
+        elif choice == '2':
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please enter a number")
+
+
+# call main function
+
+main()
