@@ -34,14 +34,20 @@ def add_book():
     Add new book to database
     """
     print("Enter the book details below:")
-    title = input("Title: ")
-    author = input("Author: ")
-    year = input("Year (optional): ")
-    genre = input("Genre: ")
-    # add input validation here
+    fields = ["Title", "Author", "Year (optional)", "Genre"]
+    book = []
     
+    for field in fields:
+        while True:
+            value = input(f"{field}: ")
+            if len(value) >= 2 and value.isalnum():
+                book.append(value)
+                break
+            else:
+                print(f"Invalid {field}. Please enter at least 2 alphanumeric characters.")
+            
     # add the book to the sheet
-    SHEET.append_row([title, author, year, genre])
+    SHEET.append_row(book)
     print("Book added successfully!")
 
 
