@@ -24,7 +24,8 @@ def main_menu():
     print("Welcome to Book Inventory!")
     print("Please select an option below:")
     print("1. Add a book")
-    print("2. Quit")
+    print("2. Remove a book")
+    print("3. Quit")
     choice = input("Enter your choice: ")
     return choice
 
@@ -50,11 +51,19 @@ def add_book():
                 break
             else:
                 print(f"Invalid {field}. Please enter at least 2 alphanumeric characters.")
-            
     # add the book to the sheet
     SHEET.append_row(book)
     print("Book added successfully!")
 
+# define the remove_book function
+def remove_book():
+    title = input("Enter the title of the book you want to remove: ")
+    # add input validation 
+    # find the book in the sheet
+    cell = SHEET.find(title)
+    # remove the book from the sheet
+    SHEET.delete_rows(cell.row)
+    print("Book removed successfully!")
 
 # define the main function
 def main():
@@ -63,6 +72,8 @@ def main():
         if choice == '1':
             add_book()
         elif choice == '2':
+            remove_book()
+        elif choice == '3':
             print("Goodbye!")
             break
         else:
