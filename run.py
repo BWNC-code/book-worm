@@ -19,8 +19,12 @@ CLIENT = gspread.authorize(SCOPED_CREDS)
 # get the instance of the Spreadsheet
 SHEET = CLIENT.open('book_worm').sheet1
 
+
 # define the main menu function
 def main_menu():
+    """
+    Displays options to user for each library function and returns choice
+    """
     print("Welcome to Book Inventory!")
     print("Please select an option below:")
     print("1. Add a book")
@@ -28,6 +32,7 @@ def main_menu():
     print("3. Quit")
     choice = input("Enter your choice: ")
     return choice
+
 
 # define the add_book function
 def add_book():
@@ -55,27 +60,31 @@ def add_book():
     SHEET.append_row(book)
     print("Book added successfully!")
 
-# define the remove_book function
+
 def remove_book():
     """
     Remove book from database
     """
-    title = input("Enter the title of the book you want to remove: ")
-    # add input validation 
-    while not title.replace(" ", "").isalnum() or len(title) < 2:
-        title = input("Please enter a valid book title: ")
+    while True:
+        title = input("Enter the title of the book you want to remove (q to return to main menu): ")
+        if title == 'q':
+            return
+        try:
+            # find the book in the sheet
+            cell = SHEET.find(title)
+            # remove the book from the sheet
+            SHEET.delete_rows(cell.row)
+            print("Book removed successfully!")
+            return
+        except AttributeError:
+            print("The book is not in the database. Please try again.")
 
-    # input validation to check if the book exists
-    try:
-        cell = SHEET.find(title)
-        # remove the book from the sheet
-        SHEET.delete_rows(cell.row)
-        print("Book removed successfully!")
-    except AttributeError:
-        print(f"The book with title '{title}' does not exist in the database.")
-    
+
 # define the main function
 def main():
+    """
+    Main function runs at start
+    """
     while True:
         choice = main_menu()
         if choice == '1':
