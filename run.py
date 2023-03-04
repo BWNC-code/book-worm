@@ -25,6 +25,7 @@ def main_menu():
     """
     Displays options to user for each library function and returns choice
     """
+    print("\033[2J\033[H")
     print("Welcome to Book Inventory!")
     print("Please select an option below:")
     print("1. Add a book")
@@ -39,6 +40,7 @@ def add_book():
     """
     Add new book to database
     """
+    print("\033[2J\033[H")
     print("Enter the book details below:")
     fields = ["Title", "Author", "Year (optional)", "Genre"]
     book = []
@@ -66,6 +68,7 @@ def remove_book():
     Remove book from database
     """
     while True:
+        print("\033[2J\033[H")
         title = input("Enter the title of the book you want to remove (q to return to main menu): ")
         if title == 'q':
             return
