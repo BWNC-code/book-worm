@@ -88,7 +88,6 @@ def remove_book():
             time.sleep(2)
 
 
-# define the update_book function
 def update_book():
     """
     Update existing book in database
@@ -100,33 +99,33 @@ def update_book():
             return
         try:
             cell = SHEET.find(title)
-
-            # update the book details
-
-            title = input("Enter the new title (or press Enter to keep the current): ")
-            author = input("Enter the new author (or press Enter to keep the current): ")
-            year = input("Enter the new year (YYYY format, or press Enter to keep the current): ")
-            genre = input("Enter the new genre (or press Enter to keep the current): ")
-
-            if title:
-                SHEET.update_cell(cell.row, 1, title)
-            if author:
-                SHEET.update_cell(cell.row, 2, author)
-            if year:
-                SHEET.update_cell(cell.row, 3, year)
-            if genre:
-                SHEET.update_cell(cell.row, 4, genre)
-
-            print("Book updated successfully!")
+        except AttributeError:
+            print(f"The book '{title}' was not found in the database.")
             time.sleep(2)
-            return
-        except AttributeError():
-            print("An unexpected error occurred. Please try again.")
-            time.sleep(2)
+            continue
 
+        book_fields = ["Title", "Author", "Year", "Genre"]
+        book_values = SHEET.row_values(cell.row)
 
-
-
+        book_update = []
+        for i, field in enumerate(book_fields):
+            while True:
+                value = input(f"Enter the new {field.lower()} (or press Enter to keep existing): ")
+                if not value:
+                    book_update.append(book_values[i])
+                    break
+                elif field == "Year" and not value.isdigit():
+                    print("Invalid year format. Please enter a 4-digit year (YYYY).")
+                elif len(value) < 2 or not value.replace(" ","").isalnum():
+                    print(f"Invalid {field.lower()} format. Please enter at least 2 alphanumeric characters.")
+                else:
+                    book_update.append(value)
+                    break
+        for i, field in enumerate(book_fields):
+            SHEET.update_cell(cell.row, i+1, book_update[i])
+        print("Book updated successfully!")
+        time.sleep(2)
+        return
 
 # define the main function
 def main():
