@@ -31,7 +31,8 @@ def main_menu():
     print("Please select an option below:")
     print("1. Add a book")
     print("2. Remove a book")
-    print("3. Quit")
+    print("3. Update a book")
+    print("4. Quit")
     choice = input("Enter your choice: ")
     return choice
 
@@ -45,7 +46,7 @@ def add_book():
     print("Enter the book details below:")
     fields = ["Title", "Author", "Year (optional)", "Genre"]
     book = []
-    
+
     for i, field in enumerate(fields):
         while True:
             value = input(f"{field}: ")
@@ -71,7 +72,7 @@ def remove_book():
     """
     while True:
         print("\033[2J\033[H")
-        title = input("Enter the title of the book you want to remove (q to return to main menu): ")
+        title = input("Enter the title of the book you want to remove (q to return to main menu): \n")
         if title == 'q':
             return
         try:
@@ -87,6 +88,46 @@ def remove_book():
             time.sleep(2)
 
 
+# define the update_book function
+def update_book():
+    """
+    Update existing book in database
+    """
+    while True:
+        print("\033[2J\033[H")
+        title = input("Enter the title of the book you want to update (q to return to main menu): \n")
+        if title == 'q':
+            return
+        try:
+            cell = SHEET.find(title)
+
+            # update the book details
+
+            title = input("Enter the new title (or press Enter to keep the current): ")
+            author = input("Enter the new author (or press Enter to keep the current): ")
+            year = input("Enter the new year (YYYY format, or press Enter to keep the current): ")
+            genre = input("Enter the new genre (or press Enter to keep the current): ")
+
+            if title:
+                SHEET.update_cell(cell.row, 1, title)
+            if author:
+                SHEET.update_cell(cell.row, 2, author)
+            if year:
+                SHEET.update_cell(cell.row, 3, year)
+            if genre:
+                SHEET.update_cell(cell.row, 4, genre)
+
+            print("Book updated successfully!")
+            time.sleep(2)
+            return
+        except AttributeError():
+            print("An unexpected error occurred. Please try again.")
+            time.sleep(2)
+
+
+
+
+
 # define the main function
 def main():
     """
@@ -99,6 +140,8 @@ def main():
         elif choice == '2':
             remove_book()
         elif choice == '3':
+            update_book()
+        elif choice == '4':
             print("Goodbye!")
             break
         else:
