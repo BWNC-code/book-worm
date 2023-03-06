@@ -1,6 +1,5 @@
 # import required libraries
 import time
-import math
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -132,59 +131,52 @@ def update_book():
         return
 
 
-def display_page(headers, data, page_number):
-    """
-    Display a single page of books
-    """
-    # calculate the start and end indices of the page
-    start_index = (page_number - 1) * 10
-    end_index = start_index + 10
-    # display the headers
-    print("\033[2J\033[H")
-    print("\t".join(headers))
-    print("=" * 80)
-    # display the data for the page
-    for row in data[start_index:end_index]:
-        print("\t".join(row))
-    print("=" * 80)
-
 # define the display_books function
 def display_books():
     """
-    Display books in the database, splitting into pages of 10 with user controls to navigate pages or q to quit
+    Display books in the database, 10 books per page with navigation controls
     """
-    # get all the values in the sheet
-    values = SHEET.get_all_values()
-
-    # extract the headers and data
-    headers = values[0]
-    data = values[1:]
-
-    # get the total number of pages
-    total_pages = math.ceil(len(data) / 10)
-
-    # set the initial page to 1
-    current_page = 1
-
-    # display the first page
-    display_page(headers, data, current_page)
-
-    # loop until the user quits
     while True:
-        # get the user's input
-        choice = input(f"Page {current_page} of {total_pages}. Enter 'n' for next page, 'p' for previous page, or 'q' to quit: ")
-        # handle the user's input
-        if choice == 'n' and current_page < total_pages:
-            current_page += 1
-            display_page(headers, data, current_page)
-        elif choice == 'p' and current_page > 1:
-            current_page -= 1
-            display_page(headers, data, current_page)
-        elif choice == 'q':
-            break
-        else:
-            print("Invalid input. Please enter 'n', 'p', or 'q'.")
+        print("\033[2J\033[H")
+        print("BOOK INVENTORY\n")
 
+        # get all the records from the sheet
+        records = SHEET.get_all_records()
+
+        # print column headers
+        print(f"{'Title':<20}{'Author':<20}{'Year':<10}{'Genre':<20}")
+        print("="*80)
+
+        # display records in pages of 10
+        page = 1
+        total_pages = (len(records) // 10) + 1
+        while page <= total_pages:
+            start = (page - 1) * 10
+            end = start + 10
+            print("\033[2J\033[H")
+            print("BOOK INVENTORY\n")
+            print(f"{'Title':<20}{'Author':<20}{'Year':<10}{'Genre':<20}")
+            print("="*80)
+            for record in records[start:end]:
+                title = record['Title']
+                author = record['Author']
+                year = record['Year Published'] or ''
+                genre = record['Genre']
+                print(f"{title:<20}{author:<20}{year:<10}{genre:<20}")
+            print("="*80)
+            print(f"Page {page} of {total_pages}")
+            print("Enter 'n' for next page, 'p' for previous page, or 'q' to quit")
+            choice = input()
+            if choice == 'n':
+                if page < total_pages:
+                    page += 1
+            elif choice == 'p':
+                if page > 1:
+                    page -= 1
+            elif choice == 'q':
+                return
+            else:
+                print("Invalid choice. Please enter 'n', 'p', or 'q'.")
 
 
 # define the main function
