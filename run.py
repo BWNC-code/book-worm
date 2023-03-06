@@ -1,5 +1,6 @@
 # import required libraries
 import time
+import math
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -32,7 +33,8 @@ def main_menu():
     print("1. Add a book")
     print("2. Remove a book")
     print("3. Update a book")
-    print("4. Quit")
+    print("4. Display all books")
+    print("5. Quit")
     choice = input("Enter your choice: ")
     return choice
 
@@ -66,13 +68,14 @@ def add_book():
     time.sleep(2)
 
 
+# define the remove_book function
 def remove_book():
     """
     Remove book from database
     """
     while True:
         print("\033[2J\033[H")
-        title = input("Enter the title of the book you want to remove (q to return to main menu): \n")
+        title = input("Enter the title of the book you want to remove\n(q to return to main menu): ")
         if title == 'q':
             return
         try:
@@ -88,13 +91,14 @@ def remove_book():
             time.sleep(2)
 
 
+# define the update_book function
 def update_book():
     """
     Update existing book in database
     """
     while True:
         print("\033[2J\033[H")
-        title = input("Enter the title of the book you want to update (q to return to main menu): \n")
+        title = input("Enter the title of the book you want to update\n (q to return to main menu): ")
         if title == 'q':
             return
         try:
@@ -116,7 +120,7 @@ def update_book():
                     break
                 elif field == "Year" and not value.isdigit():
                     print("Invalid year format. Please enter a 4-digit year (YYYY).")
-                elif len(value) < 2 or not value.replace(" ","").isalnum():
+                elif len(value) < 2 or not value.replace(" ", "").isalnum():
                     print(f"Invalid {field.lower()} format. Please enter at least 2 alphanumeric characters.")
                 else:
                     book_update.append(value)
@@ -126,6 +130,62 @@ def update_book():
         print("Book updated successfully!")
         time.sleep(2)
         return
+
+
+def display_page(headers, data, page_number):
+    """
+    Display a single page of books
+    """
+    # calculate the start and end indices of the page
+    start_index = (page_number - 1) * 10
+    end_index = start_index + 10
+    # display the headers
+    print("\033[2J\033[H")
+    print("\t".join(headers))
+    print("=" * 80)
+    # display the data for the page
+    for row in data[start_index:end_index]:
+        print("\t".join(row))
+    print("=" * 80)
+
+# define the display_books function
+def display_books():
+    """
+    Display books in the database, splitting into pages of 10 with user controls to navigate pages or q to quit
+    """
+    # get all the values in the sheet
+    values = SHEET.get_all_values()
+
+    # extract the headers and data
+    headers = values[0]
+    data = values[1:]
+
+    # get the total number of pages
+    total_pages = math.ceil(len(data) / 10)
+
+    # set the initial page to 1
+    current_page = 1
+
+    # display the first page
+    display_page(headers, data, current_page)
+
+    # loop until the user quits
+    while True:
+        # get the user's input
+        choice = input(f"Page {current_page} of {total_pages}. Enter 'n' for next page, 'p' for previous page, or 'q' to quit: ")
+        # handle the user's input
+        if choice == 'n' and current_page < total_pages:
+            current_page += 1
+            display_page(headers, data, current_page)
+        elif choice == 'p' and current_page > 1:
+            current_page -= 1
+            display_page(headers, data, current_page)
+        elif choice == 'q':
+            break
+        else:
+            print("Invalid input. Please enter 'n', 'p', or 'q'.")
+
+
 
 # define the main function
 def main():
@@ -141,6 +201,8 @@ def main():
         elif choice == '3':
             update_book()
         elif choice == '4':
+            display_books()
+        elif choice == '5':
             print("Goodbye!")
             break
         else:
