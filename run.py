@@ -27,7 +27,7 @@ def main_menu():
     Displays options to user for each library function and returns choice
     """
     print("\033[2J\033[H")
-    print("Welcome to Book Inventory!")
+    print("Welcome to BookWorm!")
     print("Please select an option below:")
     print("1. Add a book")
     print("2. Remove a book")
@@ -199,6 +199,30 @@ def main():
             break
         else:
             print("Invalid choice. Please enter a number")
+
+
+# ASCII title screen
+print("\033[2J\033[H")
+print(r"""
+                 .-~~~~~~~~~-._       _.-~~~~~~~~~-.
+            __.'              ~.   .~              `.__
+          .'//                  \./                  \\`.
+        .'//                     |                     \\`.
+      .'// .-~"""""""~~~~-._     |     _,-~~~~"""""""~-. \\`.
+    .'//.-"                 `-.  |  .-'                 "-.\\`.
+  .'//______.============-..   \ | /   ..-============.______\\`.
+.'______________________________\|/______________________________`.
+        ______             _    _    _                      
+        | ___ \           | |  | |  | |                     
+        | |_/ / ___   ___ | | _| |  | | ___  _ __ _ __ ___  
+        | ___ \/ _ \ / _ \| |/ | |/\| |/ _ \| '__| '_ ` _ \ 
+        | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
+        \____/ \___/ \___/|_|\_\\/  \/ \___/|_|  |_| |_| |_|
+                                                    
+                                                    
+""")
+input("Press Enter to continue...")
+print("\033[2J\033[H")
 
 
 # call main function
