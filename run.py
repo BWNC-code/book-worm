@@ -7,6 +7,9 @@ from termcolor import cprint
 from inquirer import prompt, List
 from inquirer.themes import GreenPassion
 from tabulate import tabulate
+import argon2
+from gspread.exceptions import APIError
+from googleapiclient.errors import HttpError
 
 # define scope
 SCOPE = [
@@ -24,6 +27,50 @@ CLIENT = gspread.authorize(SCOPED_CREDS)
 
 # get the instance of the Spreadsheet
 SHEET = CLIENT.open('book_worm').sheet1
+
+G_SHEET = CLIENT.open('book_worm')
+
+# Initialize the Argon2 password hasher
+password_hasher = argon2.PasswordHasher()
+
+
+# Create a new user account
+def create_user():
+    """
+    Create a new user account with a new sheet in CLIENT and add the user's
+    username and hashed password to the 'users' sheet.
+    """
+    # Get the 'users' sheet
+    users_sheet = CLIENT.open('book_worm').worksheet('users')
+
+    # Get the new user's information
+    username = input("Enter a username: ")
+    password = input("Enter a password: ")
+
+    # Hash the password using Argon2
+    hashed_password = password_hasher.hash(password)
+
+    # Try to create a new sheet for the user
+    try:
+        new_sheet = G_SHEET.add_worksheet(
+            title=username, rows="100", cols="20")
+        new_sheet.update('A1', 'Title')
+        new_sheet.update('B1', 'Author')
+        new_sheet.update('C1', 'Year Published')
+        new_sheet.update('D1', 'Genre')
+    except APIError:
+        print("Error: a sheet with that name already exists")
+        time.sleep(2)
+        return
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+        time.sleep(2)
+        return
+
+    # Add the user's information to the 'users' sheet
+    users_sheet.append_row([username, hashed_password])
+    print("User account created successfully!")
+    time.sleep(2)
 
 
 # define the main menu function
@@ -203,7 +250,7 @@ def remove_book():
             SHEET.delete_rows(cell.row)
             print("Book removed successfully!")
             time.sleep(2)
-            
+
             # ask user if they want to remove another book
             while True:
                 choice = input("Do you want to remove another book? (y/n): ")
@@ -510,4 +557,5 @@ print("\033[2J\033[H")
 
 # call main function
 
-main()
+# main()
+create_user()
