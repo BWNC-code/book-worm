@@ -71,7 +71,7 @@ def add_book():
 
 
 # define add_book_isbn function
-def add_book_isbn(timeout=10):
+def add_book_isbn():
     """
     Look up book details using an ISBN and add the book to the database
     """
@@ -84,27 +84,36 @@ def add_book_isbn(timeout=10):
         if isbn == 'q':
             return
 
-        # Call Google Books API to retrieve book details
-        url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
-        response = requests.get(url, timeout=timeout)
-        if response.status_code == 404:
+        try:
+            # Call Google Books API to retrieve book details
+            url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+
+            book_data = response.json()["items"][0]["volumeInfo"]
+
+            # Extract book information from the API response
+            title = book_data["title"]
+            authors = ", ".join(book_data.get("authors", ["Unknown"]))
+            year = book_data.get("publishedDate", "Unknown")[:4]
+            genres = ", ".join(book_data.get("categories", ["Unknown"]))
+
+            # Add the book to the sheet
+            SHEET.append_row([title, authors, year, genres])
+
+            # Print out the information
+            print("Book added successfully!")
+            time.sleep(2)
+            return
+
+        except requests.exceptions.HTTPError:
             print("Book not found")
+            time.sleep(2)
             continue
-        book_data = response.json()["items"][0]["volumeInfo"]
-
-        # Extract book information from the API response
-        title = book_data["title"]
-        authors = ", ".join(book_data.get("authors", ["Unknown"]))
-        year = book_data.get("publishedDate", "Unknown")[:4]
-        genre = book_data.get("categories", ["Unknown"])[0]
-
-        # Add the book to the sheet
-        SHEET.append_row([title, authors, year, genre])
-
-        # Print out the information
-        print("Book added successfully!")
-        time.sleep(2)
-        return
+        except KeyError:
+            print("Invalid ISBN. Please try again.")
+            time.sleep(2)
+            continue
 
 
 def add_book_menu():
@@ -139,7 +148,8 @@ def remove_book():
     """
     while True:
         print("\033[2J\033[H")
-        title = input("Enter the title of the book you want to remove\n(q to return to main menu): ")
+        title = input("Enter the title of the book you want to remove\n"
+                      "(q to return to main menu): ")
         if title == 'q':
             return
         try:
@@ -162,7 +172,8 @@ def update_book():
     """
     while True:
         print("\033[2J\033[H")
-        title = input("Enter the title of the book you want to update\n (q to return to main menu): ")
+        title = input("Enter the title of the book you want to update\n"
+                      " (q to return to main menu): ")
         if title == 'q':
             return
         try:
@@ -178,14 +189,17 @@ def update_book():
         book_update = []
         for i, field in enumerate(book_fields):
             while True:
-                value = input(f"Enter the new {field.lower()} (or press Enter to keep existing): ")
+                value = input(f"Enter the new {field.lower()} "
+                              "(or press Enter to keep existing): ")
                 if not value:
                     book_update.append(book_values[i])
                     break
                 elif field == "Year" and not value.isdigit():
-                    print("Invalid year format. Please enter a 4-digit year (YYYY).")
+                    print("Invalid year format."
+                          " Please enter a 4-digit year (YYYY).")
                 elif len(value) < 2 or not value.replace(" ", "").isalnum():
-                    print(f"Invalid {field.lower()} format. Please enter at least 2 alphanumeric characters.")
+                    print(f"Invalid {field.lower()} format."
+                          " Please enter at least 2 alphanumeric characters.")
                 else:
                     book_update.append(value)
                     break
@@ -230,7 +244,8 @@ def display_books():
                 print(f"{title:<20}{author:<20}{year:<10}{genre:<20}")
             print("="*80)
             print(f"Page {page} of {total_pages}")
-            print("Enter 'n' for next page, 'p' for previous page, or 'q' to quit")
+            print("Enter 'n' for next page, 'p' for previous page,"
+                  " or 'q' to quit")
             choice = input()
             if choice == 'n':
                 if page < total_pages:
@@ -266,32 +281,30 @@ def main():
             print("Invalid choice. Please enter a number")
 
 
-# # ASCII title screen
-# print("\033[2J\033[H")
-# print(r"""
-#                  .-~~~~~~~~~-._       _.-~~~~~~~~~-.
-#             __.'              ~.   .~              `.__
-#           .'//                  \./                  \\`.
-#         .'//                     |                     \\`.
-#       .'// .-~\"\"\"\"\"\"\"~~~~-._     |     _,-~~~~\"\"\"\"\"\"\"~-. \\`.
-#     .'//.-"                 `-.  |  .-'                 "-.\\`.
-#   .'//______.============-..   \ | /   ..-============.______\\`.
-# .'______________________________\|/______________________________`.
-#         ______             _    _    _                      
-#         | ___ \           | |  | |  | |                     
-#         | |_/ / ___   ___ | | _| |  | | ___  _ __ _ __ ___  
-#         | ___ \/ _ \ / _ \| |/ | |/\| |/ _ \| '__| '_ ` _ \ 
-#         | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
-#         \____/ \___/ \___/|_|\_\\\/  \/ \___/|_|  |_| |_| |_|
-                                                    
-                                                    
-# """)
-# input("Press Enter to continue...")
-# print("\033[2J\033[H")
+# ASCII title screen
+print("\033[2J\033[H")
+print(r"""
+                 .-~~~~~~~~~-._       _.-~~~~~~~~~-.
+            __.'              ~.   .~              `.__
+          .'//                  \./                  \\`.
+        .'//                     |                     \\`.
+      .'// .-~\"\"\"\"\"\"\"~~~~-._     |     _,-~~~~\"\"\"\"\"\"\"~-. \\`.
+    .'//.-"                 `-.  |  .-'                 "-.\\`.
+  .'//______.============-..   \ | /   ..-============.______\\`.
+.'______________________________\|/______________________________`.
+        ______             _    _    _
+        | ___ \           | |  | |  | |
+        | |_/ / ___   ___ | | _| |  | | ___  _ __ _ __ ___
+        | ___ \/ _ \ / _ \| |/ | |/\| |/ _ \| '__| '_ ` _ \
+        | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
+        \____/ \___/ \___/|_|\_\\\/  \/ \___/|_|  |_| |_| |_|
 
 
-# # call main function
+""")
+input("Press Enter to continue...")
+print("\033[2J\033[H")
 
-# main()
 
-add_book_isbn()
+# call main function
+
+main()
