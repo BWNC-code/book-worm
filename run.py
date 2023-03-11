@@ -4,6 +4,8 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 from termcolor import colored
+from inquirer import prompt, List
+from inquirer.themes import GreenPassion
 
 # define scope
 SCOPE = [
@@ -30,17 +32,23 @@ def main_menu():
     """
     print("\033[2J\033[H")
     print(colored("Welcome to BookWorm!", "yellow"))
-    print("Please select an option below:")
     print(" ")
-    print(colored("1. Add a book", "green"))
-    print(colored("2. Remove a book", "green"))
-    print(colored("3. Update a book", "green"))
-    print(colored("4. Search for a book", "green"))
-    print(colored("5. Display all books", "green"))
-    print(colored("6. Quit", "red"))
-    print(" ")
-    choice = input(colored("Enter your choice: ", "blue"))
-    return choice
+
+    questions = [
+        List('choice',
+             message="Please select an option below:",
+             choices=[('Add a book', '1'),
+                      ('Remove a book', '2'),
+                      ('Update a book', '3'),
+                      ('Search for a book', '4'),
+                      ('Display all books', '5'),
+                      ('Quit', '6')
+                      ]
+             ),
+    ]
+
+    choice = prompt(questions, theme=GreenPassion())
+    return choice['choice']
 
 
 # define the add_book function
