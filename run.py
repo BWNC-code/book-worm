@@ -1,5 +1,6 @@
 # import required libraries
 import time
+import requests
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -60,11 +61,50 @@ def add_book():
                 book.append(value)
                 break
             else:
-                print(f"Invalid {field}. Please enter at least 2 alphanumeric characters.")
+                print(
+                    f"Invalid {field}. Minimum 2 alphanumeric characters."
+                    )
     # add the book to the sheet
     SHEET.append_row(book)
     print("Book added successfully!")
     time.sleep(2)
+
+
+# define add_book_isbn function
+def add_book_isbn(timeout=10):
+    """
+    Look up book details using an ISBN and add the book to the database
+    """
+    while True:
+        print("\033[2J\033[H")
+        print("LOOK UP BOOK BY ISBN\n")
+        print("Enter 'q' at any time to quit\n")
+
+        isbn = input("Enter the book's ISBN: ")
+        if isbn == 'q':
+            return
+ 
+        # Call Google Books API to retrieve book details
+        url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
+        response = requests.get(url, timeout=timeout)
+        if response.status_code == 404:
+            print("Book not found")
+            continue
+        book_data = response.json()["items"][0]["volumeInfo"]
+
+        # Extract book information from the API response
+        title = book_data["title"]
+        authors = ", ".join(book_data.get("authors", ["Unknown"]))
+        year = book_data.get("publishedDate", "Unknown")[:4]
+        genre = book_data.get("categories", ["Unknown"])[0]
+
+        # Add the book to the sheet
+        SHEET.append_row([title, authors, year, genre])
+
+        # Print out the information
+        print("Book added successfully!")
+        time.sleep(2)
+        return
 
 
 # define the remove_book function
@@ -201,30 +241,32 @@ def main():
             print("Invalid choice. Please enter a number")
 
 
-# ASCII title screen
-print("\033[2J\033[H")
-print(r"""
-                 .-~~~~~~~~~-._       _.-~~~~~~~~~-.
-            __.'              ~.   .~              `.__
-          .'//                  \./                  \\`.
-        .'//                     |                     \\`.
-      .'// .-~"""""""~~~~-._     |     _,-~~~~"""""""~-. \\`.
-    .'//.-"                 `-.  |  .-'                 "-.\\`.
-  .'//______.============-..   \ | /   ..-============.______\\`.
-.'______________________________\|/______________________________`.
-        ______             _    _    _                      
-        | ___ \           | |  | |  | |                     
-        | |_/ / ___   ___ | | _| |  | | ___  _ __ _ __ ___  
-        | ___ \/ _ \ / _ \| |/ | |/\| |/ _ \| '__| '_ ` _ \ 
-        | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
-        \____/ \___/ \___/|_|\_\\/  \/ \___/|_|  |_| |_| |_|
+# # ASCII title screen
+# print("\033[2J\033[H")
+# print(r"""
+#                  .-~~~~~~~~~-._       _.-~~~~~~~~~-.
+#             __.'              ~.   .~              `.__
+#           .'//                  \./                  \\`.
+#         .'//                     |                     \\`.
+#       .'// .-~\"\"\"\"\"\"\"~~~~-._     |     _,-~~~~\"\"\"\"\"\"\"~-. \\`.
+#     .'//.-"                 `-.  |  .-'                 "-.\\`.
+#   .'//______.============-..   \ | /   ..-============.______\\`.
+# .'______________________________\|/______________________________`.
+#         ______             _    _    _                      
+#         | ___ \           | |  | |  | |                     
+#         | |_/ / ___   ___ | | _| |  | | ___  _ __ _ __ ___  
+#         | ___ \/ _ \ / _ \| |/ | |/\| |/ _ \| '__| '_ ` _ \ 
+#         | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
+#         \____/ \___/ \___/|_|\_\\\/  \/ \___/|_|  |_| |_| |_|
                                                     
                                                     
-""")
-input("Press Enter to continue...")
-print("\033[2J\033[H")
+# """)
+# input("Press Enter to continue...")
+# print("\033[2J\033[H")
 
 
-# call main function
+# # call main function
 
-main()
+# main()
+
+add_book_isbn()
