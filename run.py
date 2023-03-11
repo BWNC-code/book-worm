@@ -83,6 +83,16 @@ def add_book():
     print("Book added successfully!")
     time.sleep(2)
 
+    # ask user if they want to add another book
+    while True:
+        choice = input("Do you want to add another book? (y/n): ")
+        if choice.lower() == 'n':
+            return
+        elif choice.lower() == 'y':
+            break
+        else:
+            cprint("Invalid choice. Please enter 'y' or 'n'.", "red")
+
 
 # define add_book_isbn function
 def add_book_isbn():
@@ -118,7 +128,16 @@ def add_book_isbn():
             # Print out the information
             print(f"{title} by {authors} added successfully!")
             time.sleep(2)
-            return
+
+            # ask user if they want to add another book
+            while True:
+                choice = input("Do you want to add another book? (y/n): ")
+                if choice.lower() == 'n':
+                    return
+                elif choice.lower() == 'y':
+                    break
+                else:
+                    cprint("Invalid choice. Please enter 'y' or 'n'.", "red")
 
         except requests.exceptions.HTTPError:
             print("Book not found")
@@ -184,7 +203,16 @@ def remove_book():
             SHEET.delete_rows(cell.row)
             print("Book removed successfully!")
             time.sleep(2)
-            return
+            
+            # ask user if they want to remove another book
+            while True:
+                choice = input("Do you want to remove another book? (y/n): ")
+                if choice.lower() == 'n':
+                    return
+                elif choice.lower() == 'y':
+                    break
+                else:
+                    cprint("Invalid choice. Please enter 'y' or 'n'.", "red")
         except AttributeError:
             print("The book is not in the database. Please try again.")
             time.sleep(2)
