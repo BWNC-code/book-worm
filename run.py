@@ -6,6 +6,7 @@ from google.oauth2.service_account import Credentials
 from termcolor import cprint
 from inquirer import prompt, List
 from inquirer.themes import GreenPassion
+from tabulate import tabulate
 
 # define scope
 SCOPE = [
@@ -114,7 +115,7 @@ def add_book_isbn():
             SHEET.append_row([title, authors, year, genres])
 
             # Print out the information
-            print("Book added successfully!")
+            print(f"{title} added successfully!")
             time.sleep(2)
             return
 
@@ -342,42 +343,41 @@ def display_books():
         # get all the records from the sheet
         records = SHEET.get_all_records()
 
-        # print column headers
-        header = f"{'Title':<20}{'Author':<20}{'Year':<10}{'Genre':<20}"
-        cprint(header, 'cyan')
-        print("="*80)
+        # format data for tabulate
+        data = [[record['Title'],
+                 record['Author'],
+                 record['Year Published'] or '',
+                 record['Genre']]
+                for record in records]
 
         # display records in pages of 10
         page = 1
-        total_pages = (len(records) // 10) + 1
+        total_pages = (len(records) + 9) // 10
         while page <= total_pages:
             start = (page - 1) * 10
             end = start + 10
             print("\033[2J\033[H")
             cprint("BOOK INVENTORY", 'green', attrs=['bold'])
-            cprint(header, 'cyan')
-            print("="*80)
-            for record in records[start:end]:
-                title = record['Title']
-                author = record['Author']
-                year = record['Year Published'] or ''
-                genre = record['Genre']
-                print(f"{title:<20}{author:<20}{year:<10}{genre:<20}")
-            print("="*80)
+            print(tabulate(data[start:end],
+                           headers=['Title', 'Author', 'Year', 'Genre'],
+                           tablefmt='fancy_grid',
+                           maxcolwidths=20
+                           ))
             print(f"Page {page} of {total_pages}")
-            print("Enter 'n' for next page, 'p' for previous page,"
-                  " or 'q' to quit")
-            choice = input()
-            if choice == 'n':
+            choices = [
+                List('action',
+                     message="Choose an action",
+                     choices=['Next page', 'Previous page', 'Back'])
+            ]
+            answer = prompt(choices, theme=GreenPassion())
+            if answer['action'] == 'Next page':
                 if page < total_pages:
                     page += 1
-            elif choice == 'p':
+            elif answer['action'] == 'Previous page':
                 if page > 1:
                     page -= 1
-            elif choice == 'q':
+            elif answer['action'] == 'Back':
                 return
-            else:
-                cprint("Invalid choice. Please enter 'n', 'p', or 'q'.", 'red')
 
 
 # define the main function
