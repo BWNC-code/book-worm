@@ -33,8 +33,9 @@ def main_menu():
     print("1. Add a book")
     print("2. Remove a book")
     print("3. Update a book")
-    print("4. Display all books")
-    print("5. Quit")
+    print("4. Search for a book")
+    print("5. Display all books")
+    print("6. Quit")
     choice = input("Enter your choice: ")
     return choice
 
@@ -210,6 +211,95 @@ def update_book():
         return
 
 
+def display_search(matching_books):
+    """
+    Display books in a formatted manner
+    """
+    print(f"{'Title':<40} {'Author':<25} {'Genre':<20} {'Year':<10}")
+    print("-" * 80)
+
+    for book in matching_books:
+        print(f"{book['title']:<40} {book['author']:<25} {book['genre']:<20}"
+              f"{book['year']:<10}")
+    input("Press enter to exit")
+
+
+def search_books_by_author(author):
+    """
+    Search for books in the database by author name
+    """
+    matching_books = []
+    for row in SHEET.get_all_records():
+        if author.lower() in row['Author'].lower():
+            matching_books.append({
+                'title': row['Title'],
+                'author': row['Author'],
+                'genre': row['Genre'],
+                'year': row['Year Published']
+            })
+    if matching_books:
+        display_search(matching_books)
+    else:
+        print("No books found with that search term.")
+        time.sleep(2)
+
+
+def search_books_by_genre(genre):
+    """
+    Display books in the database that match the given genre
+    """
+    matching_books = []
+    for row in SHEET.get_all_records():
+        if genre.lower() in row['Genre'].lower():
+            matching_books.append({
+                'title': row['Title'],
+                'author': row['Author'],
+                'genre': row['Genre'],
+                'year': row['Year Published']
+            })
+    if matching_books:
+        display_search(matching_books)
+    else:
+        print(f"No books found in genre '{genre}'.")
+
+
+def search_menu():
+    """
+    Displays a search menu with options to search for books by author or genre
+    Returns:
+        str: The user's choice as a string.
+    """
+    print("\033[2J\033[H")
+    print("What would you like to search for:")
+    print("1. Search for books by author")
+    print("2. Search for books by genre")
+    print("3. Exit")
+
+    choice = input("Enter your choice: ")
+    return choice
+
+
+def search_choice():
+    """
+    Handles the user's search choice.
+    """
+    while True:
+        choice = search_menu()
+
+        if choice == '1':
+            author = input("Enter the author's name: ")
+            search_books_by_author(author)
+
+        elif choice == '2':
+            genre = input("Enter the genre: ")
+            search_books_by_genre(genre)
+
+        elif choice == '3':
+            break
+        else:
+            print("Invalid choice. Please enter a number")
+
+
 # define the display_books function
 def display_books():
     """
@@ -262,7 +352,9 @@ def display_books():
 # define the main function
 def main():
     """
-    Main function runs at start
+    Main function runs at start.
+    The function takes user input and calls corresponding sub-functions.
+    The function exits the program when the user chooses to exit.
     """
     while True:
         choice = main_menu()
@@ -273,8 +365,10 @@ def main():
         elif choice == '3':
             update_book()
         elif choice == '4':
-            display_books()
+            search_choice()
         elif choice == '5':
+            display_books()
+        elif choice == '6':
             print("Goodbye!")
             break
         else:
