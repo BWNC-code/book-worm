@@ -337,13 +337,14 @@ def display_books():
     """
     while True:
         print("\033[2J\033[H")
-        print("BOOK INVENTORY\n")
+        cprint("BOOK INVENTORY", 'green', attrs=['bold'])
 
         # get all the records from the sheet
         records = SHEET.get_all_records()
 
         # print column headers
-        print(f"{'Title':<20}{'Author':<20}{'Year':<10}{'Genre':<20}")
+        header = f"{'Title':<20}{'Author':<20}{'Year':<10}{'Genre':<20}"
+        cprint(header, 'cyan')
         print("="*80)
 
         # display records in pages of 10
@@ -353,8 +354,8 @@ def display_books():
             start = (page - 1) * 10
             end = start + 10
             print("\033[2J\033[H")
-            print("BOOK INVENTORY\n")
-            print(f"{'Title':<20}{'Author':<20}{'Year':<10}{'Genre':<20}")
+            cprint("BOOK INVENTORY", 'green', attrs=['bold'])
+            cprint(header, 'cyan')
             print("="*80)
             for record in records[start:end]:
                 title = record['Title']
@@ -376,7 +377,7 @@ def display_books():
             elif choice == 'q':
                 return
             else:
-                print("Invalid choice. Please enter 'n', 'p', or 'q'.")
+                cprint("Invalid choice. Please enter 'n', 'p', or 'q'.", 'red')
 
 
 # define the main function
