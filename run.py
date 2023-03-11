@@ -3,7 +3,7 @@ import time
 import requests
 import gspread
 from google.oauth2.service_account import Credentials
-from termcolor import colored
+from termcolor import cprint
 from inquirer import prompt, List
 from inquirer.themes import GreenPassion
 
@@ -31,7 +31,7 @@ def main_menu():
     Displays options to user for each library function and returns choice
     """
     print("\033[2J\033[H")
-    print(colored("Welcome to BookWorm!", "yellow"))
+    cprint("Welcome to BookWorm!", "yellow")
     print(" ")
 
     questions = [
@@ -134,12 +134,21 @@ def add_book_menu():
     """
     while True:
         print("\033[2J\033[H")
-        print("ADD BOOK\n")
-        print(
-            "Enter 'q' at any time to quit\n")
-        print("1. Add book manually")
-        print("2. Look up book by ISBN")
-        choice = input("Enter your choice: ")
+        cprint("ADD BOOK", "green", attrs=["bold"])
+
+        questions = [
+            List(
+                "choice",
+                message="How would you like to add a book?",
+                choices=[
+                    ("Add book manually", "1"),
+                    ("Look up book by ISBN", "2"),
+                    ("Quit", "q")
+                ],
+            ),
+        ]
+        answers = prompt(questions, theme=GreenPassion())
+        choice = answers["choice"]
         if choice == '1':
             add_book()
             return
