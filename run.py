@@ -83,7 +83,7 @@ def add_book_isbn(timeout=10):
         isbn = input("Enter the book's ISBN: ")
         if isbn == 'q':
             return
- 
+
         # Call Google Books API to retrieve book details
         url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
         response = requests.get(url, timeout=timeout)
@@ -105,6 +105,31 @@ def add_book_isbn(timeout=10):
         print("Book added successfully!")
         time.sleep(2)
         return
+
+
+def add_book_menu():
+    """
+    Display the add book menu and prompt user for choice
+    """
+    while True:
+        print("\033[2J\033[H")
+        print("ADD BOOK\n")
+        print(
+            "Enter 'q' at any time to quit\n")
+        print("1. Add book manually")
+        print("2. Look up book by ISBN")
+        choice = input("Enter your choice: ")
+        if choice == '1':
+            add_book()
+            return
+        elif choice == '2':
+            add_book_isbn()
+            return
+        elif choice == 'q':
+            return
+        else:
+            print("Invalid choice. Please enter 1 or 2.")
+            time.sleep(2)
 
 
 # define the remove_book function
@@ -227,7 +252,7 @@ def main():
     while True:
         choice = main_menu()
         if choice == '1':
-            add_book()
+            add_book_menu()
         elif choice == '2':
             remove_book()
         elif choice == '3':
