@@ -26,9 +26,7 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 CLIENT = gspread.authorize(SCOPED_CREDS)
 
 # get the instance of the Spreadsheet
-SHEET = CLIENT.open('book_worm').sheet1
-
-G_SHEET = CLIENT.open('book_worm')
+MAIN_SHEET = CLIENT.open('book_worm')
 
 # Initialize the Argon2 password hasher
 password_hasher = argon2.PasswordHasher()
@@ -43,16 +41,24 @@ def create_user():
     # Get the 'users' sheet
     users_sheet = CLIENT.open('book_worm').worksheet('users')
 
+    cprint("CREATE A NEW USER", "green", attrs=["bold"])
+    print(" ")
     # Get the new user's information
     username = input("Enter a username: ")
-    password = input("Enter a password: ")
+    while True:
+        password = input("Password: ")
+        confirm_password = input("Confirm password: ")
+        if password != confirm_password:
+            print("Passwords do not match. Please try again.")
+        else:
+            break
 
     # Hash the password using Argon2
     hashed_password = password_hasher.hash(password)
 
     # Try to create a new sheet for the user
     try:
-        new_sheet = G_SHEET.add_worksheet(
+        new_sheet = MAIN_SHEET.add_worksheet(
             title=username, rows="100", cols="20")
         new_sheet.update('A1', 'Title')
         new_sheet.update('B1', 'Author')
@@ -71,6 +77,50 @@ def create_user():
     users_sheet.append_row([username, hashed_password])
     print("User account created successfully!")
     time.sleep(2)
+    return
+
+
+def login():
+    """
+    Log in to an existing user account and set SHEET as their sheet in
+    book_worm.
+    """
+    # Get the 'users' sheet
+    users_sheet = CLIENT.open('book_worm').worksheet('users')
+
+    # Get the username and password from the user
+    username = input("Enter your username: ")
+    password = input("Enter your password: ")
+
+    # Try to find the user's information in the 'users' sheet
+    user_cell = users_sheet.find(username)
+    if not user_cell:
+        print("Error: username not found")
+        return False
+
+    # Get the row and column indices of the user's information
+    row_index = user_cell.row
+    password_col = user_cell.col + 1
+
+    # Check the password using Argon2
+    password_hash = users_sheet.cell(row_index, password_col).value
+
+    try:
+        password_hasher.verify(password_hash, password)
+    except (ValueError, argon2.exceptions.VerifyMismatchError):
+        print("Error: incorrect password")
+        return False
+
+    # Set SHEET as the user's sheet in book_worm
+    try:
+        global SHEET
+        SHEET = CLIENT.open('book_worm').worksheet(username)
+    except APIError:
+        print("Error: unable to access the user's sheet")
+        return False
+
+    print("Logged in successfully!")
+    return True
 
 
 # define the main menu function
@@ -512,6 +562,29 @@ def main():
     The function takes user input and calls corresponding sub-functions.
     The function exits the program when the user chooses to exit.
     """
+    # Ask the user if they want to login or create a new user
+    while True:
+        print("\033[2J\033[H")
+        login_choice = prompt([
+            List('login_choice',
+                 message="Choose an option:",
+                 choices=['Login', 'Create User', 'Quit']),
+        ], theme=GreenPassion())['login_choice']
+
+        if login_choice == 'Quit':
+            return
+        elif login_choice == 'Create User':
+            create_user()
+        elif login_choice == 'Login':
+            # Prompt the user to login until a
+            # valid username and password is entered
+            while True:
+                if login():
+                    break
+                else:
+                    print("Invalid username or password. Please try again.")
+            break
+
     while True:
         choice = main_menu()
         if choice == '1':
@@ -557,5 +630,4 @@ print("\033[2J\033[H")
 
 # call main function
 
-# main()
-create_user()
+main()
