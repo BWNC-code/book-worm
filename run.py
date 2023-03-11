@@ -41,6 +41,7 @@ def create_user():
     # Get the 'users' sheet
     users_sheet = CLIENT.open('book_worm').worksheet('users')
 
+    print("\033[2J\033[H")
     cprint("CREATE A NEW USER", "green", attrs=["bold"])
     print(" ")
     # Get the new user's information
@@ -88,6 +89,10 @@ def login():
     # Get the 'users' sheet
     users_sheet = CLIENT.open('book_worm').worksheet('users')
 
+    print("\033[2J\033[H")
+    cprint("LOGIN TO YOUR LIBRARY", "green", attrs=["bold"])
+    print(" ")
+
     # Get the username and password from the user
     username = input("Enter your username: ")
     password = input("Enter your password: ")
@@ -120,6 +125,7 @@ def login():
         return False
 
     print("Logged in successfully!")
+    time.sleep(2)
     return True
 
 
