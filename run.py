@@ -3,6 +3,7 @@ import time
 import requests
 import gspread
 from google.oauth2.service_account import Credentials
+from termcolor import colored
 
 # define scope
 SCOPE = [
@@ -28,15 +29,17 @@ def main_menu():
     Displays options to user for each library function and returns choice
     """
     print("\033[2J\033[H")
-    print("Welcome to BookWorm!")
+    print(colored("Welcome to BookWorm!", "yellow"))
     print("Please select an option below:")
-    print("1. Add a book")
-    print("2. Remove a book")
-    print("3. Update a book")
-    print("4. Search for a book")
-    print("5. Display all books")
-    print("6. Quit")
-    choice = input("Enter your choice: ")
+    print(" ")
+    print(colored("1. Add a book", "green"))
+    print(colored("2. Remove a book", "green"))
+    print(colored("3. Update a book", "green"))
+    print(colored("4. Search for a book", "green"))
+    print(colored("5. Display all books", "green"))
+    print(colored("6. Quit", "red"))
+    print(" ")
+    choice = input(colored("Enter your choice: ", "blue"))
     return choice
 
 
@@ -228,39 +231,46 @@ def search_books_by_author(author):
     """
     Search for books in the database by author name
     """
-    matching_books = []
-    for row in SHEET.get_all_records():
-        if author.lower() in row['Author'].lower():
-            matching_books.append({
-                'title': row['Title'],
-                'author': row['Author'],
-                'genre': row['Genre'],
-                'year': row['Year Published']
-            })
-    if matching_books:
-        display_search(matching_books)
+    if author == '':
+        return
     else:
-        print("No books found with that search term.")
-        time.sleep(2)
+        matching_books = []
+        for row in SHEET.get_all_records():
+            if author.lower() in row['Author'].lower():
+                matching_books.append({
+                    'title': row['Title'],
+                    'author': row['Author'],
+                    'genre': row['Genre'],
+                    'year': row['Year Published']
+                })
+        if matching_books:
+            display_search(matching_books)
+        else:
+            print("No books found with that search term.")
+            time.sleep(2)
 
 
 def search_books_by_genre(genre):
     """
     Display books in the database that match the given genre
     """
-    matching_books = []
-    for row in SHEET.get_all_records():
-        if genre.lower() in row['Genre'].lower():
-            matching_books.append({
-                'title': row['Title'],
-                'author': row['Author'],
-                'genre': row['Genre'],
-                'year': row['Year Published']
-            })
-    if matching_books:
-        display_search(matching_books)
+    if genre == '':
+        return
     else:
-        print(f"No books found in genre '{genre}'.")
+        matching_books = []
+        for row in SHEET.get_all_records():
+            if genre.lower() in row['Genre'].lower():
+                matching_books.append({
+                    'title': row['Title'],
+                    'author': row['Author'],
+                    'genre': row['Genre'],
+                    'year': row['Year Published']
+                })
+        if matching_books:
+            display_search(matching_books)
+        else:
+            print(f"No books found in genre '{genre}'.")
+            time.sleep(2)
 
 
 def search_menu():
@@ -287,17 +297,20 @@ def search_choice():
         choice = search_menu()
 
         if choice == '1':
-            author = input("Enter the author's name: ")
+            author = input("Enter the author's name"
+                           " (just hit enter to go back): ")
             search_books_by_author(author)
 
         elif choice == '2':
-            genre = input("Enter the genre: ")
+            genre = input("Enter the genre"
+                          " (just hit enter to go back): ")
             search_books_by_genre(genre)
 
         elif choice == '3':
             break
         else:
             print("Invalid choice. Please enter a number")
+            time.sleep(2)
 
 
 # define the display_books function
