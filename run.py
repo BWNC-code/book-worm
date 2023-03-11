@@ -58,6 +58,7 @@ def add_book():
     Add new book to database
     """
     print("\033[2J\033[H")
+    cprint("ADD NEW BOOK", "green", attrs=["bold"])
     print("Enter the book details below:")
     fields = ["Title", "Author", "Year (optional)", "Genre"]
     book = []
@@ -90,7 +91,7 @@ def add_book_isbn():
     """
     while True:
         print("\033[2J\033[H")
-        print("LOOK UP BOOK BY ISBN\n")
+        cprint("ADD BOOK BY ISBN", "green", attrs=["bold"])
         print("Enter 'q' at any time to quit\n")
 
         isbn = input("Enter the book's ISBN: ")
@@ -115,7 +116,7 @@ def add_book_isbn():
             SHEET.append_row([title, authors, year, genres])
 
             # Print out the information
-            print(f"{title} added successfully!")
+            print(f"{title} by {authors} added successfully!")
             time.sleep(2)
             return
 
@@ -136,6 +137,7 @@ def add_book_menu():
     while True:
         print("\033[2J\033[H")
         cprint("ADD BOOK", "green", attrs=["bold"])
+        print(" ")
 
         questions = [
             List(
@@ -170,6 +172,7 @@ def remove_book():
     """
     while True:
         print("\033[2J\033[H")
+        cprint("REMOVE BOOK FROM DATABASE", "green", attrs=["bold"])
         title = input("Enter the title of the book you want to remove\n"
                       "(q to return to main menu): ")
         if title == 'q':
@@ -194,6 +197,7 @@ def update_book():
     """
     while True:
         print("\033[2J\033[H")
+        cprint("UPDATE BOOK IN DATABASE", "green", attrs=["bold"])
         title = input("Enter the title of the book you want to update\n"
                       " (q to return to main menu): ")
         if title == 'q':
@@ -242,7 +246,29 @@ def display_search(matching_books):
     for book in matching_books:
         print(f"{book['title']:<40} {book['author']:<25} {book['genre']:<20}"
               f"{book['year']:<10}")
-    input("Press enter to exit")
+
+
+def search_books_by_title(title):
+    """
+    Search for books in the database by title
+    """
+    if title == '':
+        return
+    else:
+        matching_books = []
+        for row in SHEET.get_all_records():
+            if title.lower() in row['Title'].lower():
+                matching_books.append({
+                    'title': row['Title'],
+                    'author': row['Author'],
+                    'genre': row['Genre'],
+                    'year': row['Year Published']
+                })
+        if matching_books:
+            display_search(matching_books)
+        else:
+            print(f"No books found with the title {title}.")
+            time.sleep(2)
 
 
 def search_books_by_author(author):
@@ -264,7 +290,7 @@ def search_books_by_author(author):
         if matching_books:
             display_search(matching_books)
         else:
-            print("No books found with that search term.")
+            print(f"No books found with the author {author}.")
             time.sleep(2)
 
 
@@ -298,12 +324,22 @@ def search_menu():
         str: The user's choice as a string.
     """
     print("\033[2J\033[H")
-    print("What would you like to search for:")
-    print("1. Search for books by author")
-    print("2. Search for books by genre")
-    print("3. Exit")
-
-    choice = input("Enter your choice: ")
+    cprint("SEARCH FOR BOOKS", "green", attrs=["bold"])
+    print(" ")
+    questions = [
+            List(
+                "choice",
+                message="What would you like to search for?",
+                choices=[
+                    ("Search by Title", "1"),
+                    ("Search by Author", "2"),
+                    ("Search by Genre", "3"),
+                    ("Quit", "q")
+                ],
+            ),
+        ]
+    answers = prompt(questions, theme=GreenPassion())
+    choice = answers["choice"]
     return choice
 
 
@@ -315,16 +351,30 @@ def search_choice():
         choice = search_menu()
 
         if choice == '1':
+            title = input("Enter the title"
+                          " (just hit enter to go back): ")
+            if title == "":
+                continue
+            else:
+                search_books_by_title(title)
+
+        if choice == '2':
             author = input("Enter the author's name"
                            " (just hit enter to go back): ")
-            search_books_by_author(author)
-
-        elif choice == '2':
-            genre = input("Enter the genre"
-                          " (just hit enter to go back): ")
-            search_books_by_genre(genre)
+            if title == "":
+                continue
+            else:
+                search_books_by_author(author)
 
         elif choice == '3':
+            genre = input("Enter the genre"
+                          " (just hit enter to go back): ")
+            if title == "":
+                continue
+            else:
+                search_books_by_genre(genre)
+
+        elif choice == 'q':
             break
         else:
             print("Invalid choice. Please enter a number")
@@ -408,7 +458,7 @@ def main():
 
 # ASCII title screen
 print("\033[2J\033[H")
-print(r'''
+cprint(r'''
                  .-~~~~~~~~~-._       _.-~~~~~~~~~-.
             __.'              ~.   .~              `.__
           .'//                  \./                  \\`.
@@ -424,7 +474,7 @@ print(r'''
         | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
         \____/ \___/ \___/|_|\_\\\/  \/ \___/|_|  |_| |_| |_|
 
-''')
+''', 'green')
 
 input("Press Enter to continue...")
 print("\033[2J\033[H")
