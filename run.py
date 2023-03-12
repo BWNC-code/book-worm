@@ -44,15 +44,21 @@ def create_user():
     print("\033[2J\033[H")
     cprint("CREATE A NEW USER", "green", attrs=["bold"])
     print(" ")
+    cprint("PRESS CTRL+C TO CANCEL", "green", attrs=["bold"])
     # Get the new user's information
-    username = input("Enter a username: ")
-    while True:
-        password = input("Password: ")
-        confirm_password = input("Confirm password: ")
-        if password != confirm_password:
-            print("Passwords do not match. Please try again.")
-        else:
-            break
+    try:
+        username = input("Enter a username: ")
+        while True:
+            password = input("Password: ")
+            confirm_password = input("Confirm password: ")
+            if password != confirm_password:
+                print("Passwords do not match. Please try again.")
+            else:
+                break
+    except (KeyboardInterrupt, EOFError):
+        print("\nUser creation cancelled.")
+        time.sleep(2)
+        return
 
     # Hash the password using Argon2
     hashed_password = password_hasher.hash(password)
@@ -92,10 +98,14 @@ def login():
     print("\033[2J\033[H")
     cprint("LOGIN TO YOUR LIBRARY", "green", attrs=["bold"])
     print(" ")
+    cprint("PRESS CTRL+C TO CANCEL", "green", attrs=["bold"])
 
-    # Get the username and password from the user
-    username = input("Enter your username: ")
-    password = input("Enter your password: ")
+    try:
+        # Get the username and password from the user
+        username = input("Enter your username: ")
+        password = input("Enter your password: ")
+    except KeyboardInterrupt:
+        return "Q"
 
     # Try to find the user's information in the 'users' sheet
     user_cell = users_sheet.find(username)
@@ -585,11 +595,15 @@ def main():
             # Prompt the user to login until a
             # valid username and password is entered
             while True:
-                if login():
+                result = login()
+                if result is True:
+                    break
+                elif result == "Q":
                     break
                 else:
                     print("Invalid username or password. Please try again.")
-            break
+            if result is True:
+                break
 
     while True:
         choice = main_menu()
