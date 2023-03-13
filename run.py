@@ -502,7 +502,7 @@ def search_choice():
         if choice == '2':
             author = input("Enter the author's name"
                            " (just hit enter to go back): ")
-            if title == "":
+            if author == "":
                 continue
             else:
                 search_books_by_author(author)
@@ -510,7 +510,7 @@ def search_choice():
         elif choice == '3':
             genre = input("Enter the genre"
                           " (just hit enter to go back): ")
-            if title == "":
+            if genre == "":
                 continue
             else:
                 search_books_by_genre(genre)
