@@ -41,18 +41,28 @@ def create_user():
     # Get the 'users' sheet
     users_sheet = CLIENT.open('book_worm').worksheet('users')
 
-    print("\033[2J\033[H")
-    cprint("CREATE A NEW USER", "green", attrs=["bold"])
-    print(" ")
-    cprint("PRESS CTRL+C TO CANCEL", "green", attrs=["bold"])
     # Get the new user's information
     try:
-        username = input("Enter a username: ")
         while True:
-            password = input("Password: ")
-            confirm_password = input("Confirm password: ")
-            if password != confirm_password:
+            print("\033[2J\033[H")
+            cprint("CREATE A NEW USER", "green", attrs=["bold"])
+            print(" ")
+            cprint("PRESS CTRL+C TO CANCEL", "green", attrs=["bold"])
+            username = input("Enter a username: \n")
+            if len(username) < 4:
+                print("Username must have at least 4 characters."
+                      " Please try again.")
+                time.sleep(2)
+                continue
+            password = input("Password: \n")
+            confirm_password = input("Confirm password: \n")
+            if len(password) < 8:
+                print("Password must have at least 8 characters."
+                      " Please try again.")
+                time.sleep(2)
+            elif password != confirm_password:
                 print("Passwords do not match. Please try again.")
+                time.sleep(2)
             else:
                 break
     except (KeyboardInterrupt, EOFError):
@@ -584,14 +594,16 @@ def main():
         login_choice = prompt([
             List('login_choice',
                  message="Choose an option:",
-                 choices=['Login', 'Create User', 'Quit']),
+                 choices=['Login'.center(80),
+                          'Create User'.center(80),
+                          'Quit'.center(80)]),
         ], theme=GreenPassion())['login_choice']
 
-        if login_choice == 'Quit':
+        if login_choice == 'Quit'.center(80):
             return
-        elif login_choice == 'Create User':
+        elif login_choice == 'Create User'.center(80):
             create_user()
-        elif login_choice == 'Login':
+        elif login_choice == 'Login'.center(80):
             # Prompt the user to login until a
             # valid username and password is entered
             while True:
@@ -627,24 +639,24 @@ def main():
 # ASCII title screen
 print("\033[2J\033[H")
 cprint(r'''
-                 .-~~~~~~~~~-._       _.-~~~~~~~~~-.
-            __.'              ~.   .~              `.__
-          .'//                  \./                  \\`.
-        .'//                     |                     \\`.
-      .'// .-~"""""""~~~~-._     |     _,-~~~~"""""""~-. \\`.
-    .'//.-"                 `-.  |  .-'                 "-.\\`.
-  .'//______.============-..   \ | /   ..-============.______\\`.
-.'______________________________\|/______________________________`.
-        ______             _    _    _
-        | ___ \           | |  | |  | |
-        | |_/ / ___   ___ | | _| |  | | ___  _ __ _ __ ___
-        | ___ \/ _ \ / _ \| |/ | |/\| |/ _ \| '__| '_ ` _ \
-        | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
-        \____/ \___/ \___/|_|\_\\\/  \/ \___/|_|  |_| |_| |_|
+                        .-~~~~~~~~~-._       _.-~~~~~~~~~-.
+                    __.'              ~.   .~              `.__
+                .'//                  \./                  \\`.
+                .'//                     |                     \\`.
+            .'// .-~"""""""~~~~-._     |     _,-~~~~"""""""~-. \\`.
+            .'//.-"                 `-.  |  .-'                 "-.\\`.
+        .'//______.============-..   \ | /   ..-============.______\\`.
+        .'______________________________\|/______________________________`.
+                ______             _    _    _
+                | ___ \           | |  | |  | |
+                | |_/ / ___   ___ | | _| |  | | ___  _ __ _ __ ___
+                | ___ \/ _ \ / _ \| |/ | |/\| |/ _ \| '__| '_ ` _ \
+                | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
+                \____/ \___/ \___/|_|\_\\/  \/ \___/|_|  |_| |_| |_|
 
 ''', 'green')
 
-input("Press Enter to continue...")
+input("Press Enter to continue...".center(80))
 print("\033[2J\033[H")
 
 
