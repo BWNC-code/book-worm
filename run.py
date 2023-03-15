@@ -342,6 +342,94 @@ def remove_book():
             time.sleep(2)
 
 
+def remove_book_isbn():
+    """
+    Look up book details using an ISBN and remove the book from the database
+    """
+    while True:
+        print("\033[2J\033[H")
+        cprint("REMOVE BOOK BY ISBN", "green", attrs=["bold"])
+        print("Enter 'q' at any time to quit\n")
+
+        isbn = input("Enter the book's ISBN: ")
+        if isbn == 'q':
+            return
+
+        try:
+            # Call Google Books API to retrieve book details
+            url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+
+            book_data = response.json()["items"][0]["volumeInfo"]
+
+            # Extract book information from the API response
+            title = book_data["title"]
+
+            # Search for the book in the sheet and remove it
+            sheet = SHEET.get_all_values()
+            for row in sheet:
+                if title == row[0]:
+                    SHEET.delete_row(sheet.index(row) + 1)
+                    break
+            print("Book removed successfully!")
+            time.sleep(2)
+
+            # ask user if they want to add another book
+            while True:
+                choice = input("Do you want to add another book? (y/n): ")
+                if choice.lower() == 'n':
+                    return
+                elif choice.lower() == 'y':
+                    break
+                else:
+                    cprint("Invalid choice. Please enter 'y' or 'n'.", "red")
+
+        except requests.exceptions.HTTPError:
+            print("Book not found")
+            time.sleep(2)
+            continue
+        except KeyError:
+            print("Invalid ISBN. Please try again.")
+            time.sleep(2)
+            continue
+
+
+def remove_book_menu():
+    """
+    Display the remove book menu and prompt user for choice
+    """
+    while True:
+        print("\033[2J\033[H")
+        cprint("REMOVE BOOK", "green", attrs=["bold"])
+        print(" ")
+
+        questions = [
+            List(
+                "choice",
+                message="How would you like to remove a book?",
+                choices=[
+                    ("Remove by title", "1"),
+                    ("Remove by ISBN", "2"),
+                    ("Quit", "q")
+                ],
+            ),
+        ]
+        answers = prompt(questions, theme=GreenPassion())
+        choice = answers["choice"]
+        if choice == '1':
+            remove_book()
+            return
+        elif choice == '2':
+            remove_book_isbn()
+            return
+        elif choice == 'q':
+            return
+        else:
+            print("Invalid choice. Please enter 1 or 2.")
+            time.sleep(2)
+
+
 # define the update_book function
 def update_book():
     """
@@ -661,7 +749,7 @@ def main():
         if choice == '1':
             add_book_menu()
         elif choice == '2':
-            remove_book()
+            remove_book_menu()
         elif choice == '3':
             update_book()
         elif choice == '4':
