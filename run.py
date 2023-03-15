@@ -391,12 +391,50 @@ def display_search(matching_books):
     """
     Display books in a formatted manner
     """
-    print(f"{'Title':<40} {'Author':<25} {'Genre':<20} {'Year':<10}")
-    print("-" * 80)
+    page_size = 6
+    page_number = 0
+    num_pages = (len(matching_books) + page_size - 1) // page_size
 
-    for book in matching_books:
-        print(f"{book['title']:<40} {book['author']:<25} {book['genre']:<20}"
-              f"{book['year']:<10}")
+    while True:
+        print("\033[2J\033[H")
+        start_index = page_number * page_size
+        end_index = min(start_index + page_size, len(matching_books))
+        page_books = matching_books[start_index:end_index]
+
+        data = [[book['title'],
+                 book['author'],
+                 book['genre'],
+                 book['year']
+                 ] for book in page_books]
+        headers = ['Title', 'Author', 'Genre', 'Year']
+        print(tabulate(
+                        data,
+                        headers=headers,
+                        tablefmt='fancy_grid',
+                        maxcolwidths=20
+                        ))
+
+        if num_pages > 1:
+            print(f"\nPage {page_number + 1}/{num_pages}\n")
+
+        choices = ['Next page', 'Previous page', 'Quit']
+        if page_number == 0:
+            choices.remove('Previous page')
+        if page_number == num_pages - 1:
+            choices.remove('Next page')
+
+        answer = prompt([
+            List('answer',
+                 message="Choose an option:",
+                 choices=choices),
+        ], theme=GreenPassion())['answer']
+
+        if answer == 'Next page':
+            page_number += 1
+        elif answer == 'Previous page':
+            page_number -= 1
+        else:
+            return
 
 
 def search_books_by_title(title):
@@ -526,7 +564,7 @@ def search_choice():
                 search_books_by_genre(genre)
 
         elif choice == 'q':
-            break
+            time.sleep(1)
         else:
             print("Invalid choice. Please enter a number")
             time.sleep(2)
