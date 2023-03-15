@@ -8,6 +8,7 @@ from inquirer import prompt, List
 from inquirer.themes import GreenPassion
 from tabulate import tabulate
 import argon2
+import getpass
 from gspread.exceptions import APIError
 from googleapiclient.errors import HttpError
 
@@ -113,7 +114,7 @@ def login():
     try:
         # Get the username and password from the user
         username = input("Enter your username: ")
-        password = input("Enter your password: ")
+        password = getpass.getpass(prompt="Enter your password: ")
     except KeyboardInterrupt:
         return "Q"
 
