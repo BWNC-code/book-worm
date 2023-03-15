@@ -1,4 +1,4 @@
-# import required libraries
+"""import required libraries"""
 import time
 import requests
 import gspread
@@ -632,16 +632,16 @@ def main():
         login_choice = prompt([
             List('login_choice',
                  message="Choose an option:",
-                 choices=['Login'.center(80),
-                          'Create User'.center(80),
-                          'Quit'.center(80)]),
+                 choices=['Login',
+                          'Create User',
+                          'Quit']),
         ], theme=GreenPassion())['login_choice']
 
-        if login_choice == 'Quit'.center(80):
+        if login_choice == 'Quit':
             return
-        elif login_choice == 'Create User'.center(80):
+        elif login_choice == 'Create User':
             create_user()
-        elif login_choice == 'Login'.center(80):
+        elif login_choice == 'Login':
             # Prompt the user to login until a
             # valid username and password is entered
             while True:
@@ -691,12 +691,10 @@ cprint(r'''
                 | ___ \/ _ \ / _ \| |/ | |/\| |/ _ \| '__| '_ ` _ \
                 | |_/ | (_) | (_) |   <\  /\  | (_) | |  | | | | | |
                 \____/ \___/ \___/|_|\_\\/  \/ \___/|_|  |_| |_| |_|
-
 ''', 'green')
 
 input("Press Enter to continue...".center(80))
 print("\033[2J\033[H")
-
 
 # call main function
 
