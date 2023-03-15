@@ -535,7 +535,7 @@ def search_choice():
 # define the display_books function
 def display_books():
     """
-    Display books in the database, 10 books per page with navigation controls
+    Display books in the database, 6 books per page with navigation controls
     """
     while True:
         print("\033[2J\033[H")
@@ -551,12 +551,12 @@ def display_books():
                  record['Genre']]
                 for record in records]
 
-        # display records in pages of 10
+        # display records in pages of 6
         page = 1
-        total_pages = (len(records) + 9) // 10
+        total_pages = (len(records) + 5) // 6
         while page <= total_pages:
-            start = (page - 1) * 10
-            end = start + 10
+            start = (page - 1) * 6
+            end = start + 6
             print("\033[2J\033[H")
             cprint("BOOK INVENTORY", 'green', attrs=['bold'])
             print(tabulate(data[start:end],
