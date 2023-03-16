@@ -289,7 +289,7 @@ def add_book_menu():
                 choices=[
                     ("Add book manually", "1"),
                     ("Look up book by ISBN", "2"),
-                    ("Quit", "q")
+                    ("Back", "q")
                 ],
             ),
         ]
@@ -411,7 +411,7 @@ def remove_book_menu():
                 choices=[
                     ("Remove by title", "1"),
                     ("Remove by ISBN", "2"),
-                    ("Quit", "q")
+                    ("Back", "q")
                 ],
             ),
         ]
@@ -506,7 +506,7 @@ def display_search(matching_books):
         if num_pages > 1:
             print(f"\nPage {page_number + 1}/{num_pages}\n")
 
-        choices = ['Next page', 'Previous page', 'Quit']
+        choices = ['Next page', 'Previous page', ('Back', 'q')]
         if page_number == 0:
             choices.remove('Previous page')
         if page_number == num_pages - 1:
@@ -612,7 +612,7 @@ def search_menu():
                     ("Search by Title", "1"),
                     ("Search by Author", "2"),
                     ("Search by Genre", "3"),
-                    ("Quit", "q")
+                    ("Back", "q")
                 ],
             ),
         ]
@@ -635,6 +635,7 @@ def search_choice():
                 continue
             else:
                 search_books_by_title(title)
+                continue
 
         if choice == '2':
             author = input("Enter the author's name"
@@ -643,6 +644,7 @@ def search_choice():
                 continue
             else:
                 search_books_by_author(author)
+                continue
 
         elif choice == '3':
             genre = input("Enter the genre"
@@ -651,9 +653,11 @@ def search_choice():
                 continue
             else:
                 search_books_by_genre(genre)
+                continue
 
         elif choice == 'q':
             time.sleep(1)
+            return
         else:
             print("Invalid choice. Please enter a number")
             time.sleep(2)
