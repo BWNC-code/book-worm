@@ -453,13 +453,13 @@ def update_book():
             return
         try:
             cell = SHEET.find(title)
+            book_values = SHEET.row_values(cell.row)
         except AttributeError:
             print(f"The book '{title}' was not found in the database.")
             time.sleep(2)
             continue
 
         book_fields = ["Title", "Author", "Year", "Genre"]
-        book_values = SHEET.row_values(cell.row)
 
         book_update = []
         for i, field in enumerate(book_fields):
