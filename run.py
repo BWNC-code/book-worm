@@ -181,41 +181,50 @@ def add_book():
     """
     Add new book to database
     """
-    print("\033[2J\033[H")
-    cprint("ADD NEW BOOK", "green", attrs=["bold"])
-    print("Enter the book details below:")
-    fields = ["Title", "Author", "Year (optional)", "Genre"]
-    book = []
+    try:
+        print("\033[2J\033[H")
+        cprint("ADD NEW BOOK", "green", attrs=["bold"])
+        print(" ")
+        cprint("PRESS CTRL+C TO RETURN TO MAIN MENU", "green", attrs=["bold"])
+        print("Enter the book details below:")
+        fields = ["Title", "Author", "Year (optional)", "Genre"]
+        book = []
 
-    for i, field in enumerate(fields):
+        for i, field in enumerate(fields):
+            while True:
+                value = input(f"{field}: ")
+                if i == 2 and value and not value.isdigit():
+                    print("Invalid year. Please enter digits only.")
+                elif i == 2 and value == "":
+                    book.append("")
+                    break
+                elif len(value) >= 2 and value.replace(" ", "").isalnum():
+                    book.append(value)
+                    break
+                else:
+                    print(
+                        f"Invalid {field}. Minimum 2 alphanumeric characters."
+                        )
+        # add the book to the sheet
+        try:
+            SHEET.append_row(book)
+        except gspread.exceptions.APIError:
+            print("Error adding book. Please try again.")
+            return
+        print("Book added successfully!")
+        time.sleep(2)
+
+        # ask user if they want to add another book
         while True:
-            value = input(f"{field}: ")
-            if i == 2 and value and not value.isdigit():
-                print("Invalid year. Please enter digits only.")
-            elif i == 2 and value == "":
-                book.append("")
-                break
-            elif len(value) >= 2 and value.replace(" ", "").isalnum():
-                book.append(value)
+            choice = input("Do you want to add another book? (y/n): ")
+            if choice.lower() == 'n':
+                return
+            elif choice.lower() == 'y':
                 break
             else:
-                print(
-                    f"Invalid {field}. Minimum 2 alphanumeric characters."
-                    )
-    # add the book to the sheet
-    SHEET.append_row(book)
-    print("Book added successfully!")
-    time.sleep(2)
-
-    # ask user if they want to add another book
-    while True:
-        choice = input("Do you want to add another book? (y/n): ")
-        if choice.lower() == 'n':
-            return
-        elif choice.lower() == 'y':
-            break
-        else:
-            cprint("Invalid choice. Please enter 'y' or 'n'.", "red")
+                cprint("Invalid choice. Please enter 'y' or 'n'.", "red")
+    except KeyboardInterrupt:
+        print("Add book operation canceled.")
 
 
 # define add_book_isbn function
