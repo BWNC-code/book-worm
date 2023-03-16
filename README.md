@@ -6,7 +6,7 @@
 
 ## Introduction
 
-![Home page](/assets/images/home-page.png "Site home page")
+![Home page](./screenshots/home-page.png "Site home page")
 
 BookWorm is a Python code for a command line book inventory application that uses Google Sheets as a database. It allows users to add, remove, update, search for and display books from the inventory. The code uses the gspread library to interact with Google Sheets and the Google Drive API to authorize access to the sheets. The main_menu() function displays the options to the user, and the other functions handle specific tasks such as adding, removing, updating, or displaying books. The code also includes error handling and input validation to ensure that the data entered is valid. There is a user system with secure password storage which creates an individual library for each user automatically on account creation.
 
@@ -20,19 +20,19 @@ This section explains each part of the project and the value it brings to acheiv
 
 ### Create a new user
 
-![create-user](assets/images/create-user.png "Create user page")
+![create-user](./screenshots/create-user.png "Create user page")
 
 The create_user function allows the user to create a new account with a unique username and password, and also creates a new sheet in Google Sheets for the user. The user's information is stored in the 'users' sheet, including their username and hashed password. The function uses the Argon2 password hashing algorithm to securely hash the user's password. If a sheet with the same username already exists, the function displays an error message and the account creation process is cancelled. If successful, the function prints a success message and returns.
 
 ### Login as a user
 
-![login-user](assets/images/login-user.png "Login page")
+![login-user](./screenshots/login-user.png "Login page")
 
 The login function allows users to log in to their existing account by verifying their username and password. It provides security by using password hashing to protect user information, as well as preventing the console from echoing the password input to hide from view using the getpass library. If the login is successful, the function sets the user's sheet as the global SHEET variable in the 'book_worm' spreadsheet, allowing users to access their personal library of books. If there are any errors during the login process, the function returns False and displays an error message to the user. The user can cancel the login process at any time by pressing Ctrl+C.
 
 ### Main menu function
 
-![main-menu](assets/images/main-menu.png "Main Menu")
+![main-menu](./screenshots/main-menu.png "Main Menu")
 
 The main_menu function displays a menu of options to the user for different library functions and returns their choice. The menu is displayed using the PyInquirer library, which presents the user with a list of options to choose from. The options available to the user are:
 
@@ -45,7 +45,7 @@ The main_menu function displays a menu of options to the user for different libr
 
 ### Add a book
 
-![add-book-menu](assets/images/add-book-menu.png "Add book menu")
+![add-book-menu](./screenshots/add-book-menu.png "Add book menu")
 
 The add_book_menu displays a menu to the user that prompts them to choose how they would like to add a book to the library. The function uses the prompt() function from the PyInquirer library to display a list of options, including adding a book manually, looking up a book by its ISBN, or quitting. The function then reads the user's choice and calls the appropriate function (add_book or add_book_isbn) or quits the menu if the user chooses to do so.
 
@@ -55,8 +55,7 @@ Add_book_isbn prompts the user to input an ISBN and looks up the book details us
 
 ### Remove a book
 
-![remove-book-menu](assets/images/remove-book-menu.png "Remove book menu")
-
+![remove-book-menu](./screenshots/remove-book-menu.png "Remove book menu")
 
 The remove_book_menu displays a menu to the user that prompts them to choose how they would like to remove a book from the library. The function uses the prompt() function from the PyInquirer library to display a list of options, including removing a book by title, removing a book by its ISBN, or quitting. The function then reads the user's choice and calls the appropriate function (remove_book or remove_book_isbn) or quits the menu if the user chooses to do so.
 
@@ -102,11 +101,13 @@ The search books feature allows the user to search for books in the database by 
 
 ### Responsiveness/Device Testing
 
-## Browser Compatibility Checks
-
 ## Manual Feature Testing
 
+All manual test cases can be found in [TESTING.md](./TESTING.md)
+
 ## Bugs
+
+No known bugs remaining
 
 ## Deployment
 
@@ -114,16 +115,20 @@ This section describes the process of obtaining a copy of this websites files in
 
 ### Cloning and Forking
 
--At the top of the repository page, select fork and choose a name for the new repository to create a copy
+- At the top of the repository page, select fork and choose a name for the new repository to create a copy
 
--Alternatively select code above the file viewer and either use the link to pull a copy of the code or download the code as a zip file
+- Alternatively select code above the file viewer and either use the link to pull a copy of the code or download the code as a zip file
 
 ### Local Deployment
 
 - Navigate to [Gitpod](https://gitpod.io/)
+
 - Login using a Github account
+
 - Download and install the Gitpod browser extension
+
 - Return to the repository
+
 - Select the green Gitpod button above the file viewer
 
 ### Remote Deployment
