@@ -480,12 +480,13 @@ def display_search(matching_books):
     """
     Display books in a formatted manner
     """
-    page_size = 6
+    page_size = 5
     page_number = 0
     num_pages = (len(matching_books) + page_size - 1) // page_size
 
     while True:
         print("\033[2J\033[H")
+        cprint("SEARCH RESULTS FROM DATABASE", "green", attrs=["bold"])
         start_index = page_number * page_size
         end_index = min(start_index + page_size, len(matching_books))
         page_books = matching_books[start_index:end_index]
