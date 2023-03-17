@@ -36,11 +36,11 @@
 
 ![Home page](./screenshots/home-page.png "Site home page")
 
-BookWorm is a Python based command line book inventory application that uses Google Sheets as a database. It allows users to add, remove, update, search for and display books from the inventory. The code uses the gspread library to interact with Google Sheets and the Google Drive API to authorize access to the sheets. The main_menu() function displays the options to the user, and the other functions handle specific tasks such as adding, removing, updating, or displaying books. The code also includes error handling and input validation to ensure that the data entered is valid. There is a user system with secure password storage which creates an individual library for each user automatically on account creation.
+BookWorm is a Python based command line book inventory application that uses Google Sheets as a database. It allows users to add, remove, update, search for and display books from the inventory. The code uses the gspread library to interact with Google Sheets and the Google Drive API to authorize access to the sheets. The main menu displays library management options to the user, and the other functions handle specific tasks such as adding, removing, updating, or displaying books. The code also includes error handling and input validation to ensure that the data entered is valid. There is a user system with secure password storage which creates an individual library for each user automatically on account creation.
 
 ## UI Decisions
 
-The UI of this application is a command line interface. The main menu function displays the options to the user, and the user can enter their choice by navigating menus with the arrow keys (thanks to the PyInquirer library). The various functions handle specific tasks such as adding, removing, updating, or displaying books. The display_books function displays the books in pages of 6 with navigation controls that allow the user to move between pages in order to avoid the need for vertical scrolling where possible.
+The UI of this application is a command line interface. The main menu function displays the options to the user, and the user can enter their choice by navigating menus with the arrow keys (thanks to the PyInquirer library) where possible. The various functions handle specific tasks such as adding, removing, updating, or displaying books. The display_books function displays the books in pages of 6 with navigation controls that allow the user to move between pages in order to avoid the need for vertical scrolling where possible. The same reasoning was used in displaying search results.
 
 ## Features
 
@@ -79,7 +79,7 @@ The add_book_menu displays a menu to the user that prompts them to choose how th
 
 Add_book prompts the user to input the book details such as title, author, year (optional), and genre. It validates the input and adds the book to the sheet. It then prompts the user if they want to add another book. The user can exit this function at any time prior to adding the new book by pressing CTRL+C.
 
-Add_book_isbn prompts the user to input an ISBN and looks up the book details using the Google Books API. If the book is found, it extracts the title, author(s), year, and genre from the API response and adds them to the sheet. It then prompts the user if they want to add another book. If the book is not found or an invalid ISBN is entered, it informs the user and prompts them to try again.
+Add_book_isbn prompts the user to input an ISBN and looks up the book details using the Google Books API. If the book is found, it extracts the title, author(s), year, and genre from the API response and adds them to the sheet. It then prompts the user if they want to add another book. If the book is not found or an invalid ISBN is entered, it informs the user and prompts them to try again. The user can exit the process by entering 'q' instead of a number.
 
 ### Remove a book
 
@@ -111,7 +111,7 @@ The search books feature allows the user to search for books in the database by 
 
 ## Features left to implement
 
-I'm happy with the scope that was acheived in the timescale I had, however in the future I would have like to give the user the ability to navigate the database via the arrow keys and select the option to remove or update books directly. This would avoid any mistyping of titles being an issue for the user.
+I'm happy with the scope that was acheived in the timescale I had, however in the future I would have like to give the user the ability to navigate the database directly via the arrow keys and select the option to remove or update books directly. This would avoid any mistyping of titles being an issue for the user.
 This could also be implemented as part of search results.
 
 There could also be scope to add further attributes to books such as ratings or reading status.
@@ -191,7 +191,18 @@ To deploy the program on Heroku and ensure that all features work as expected, f
 
 - Follow the instructions provided by Heroku, and select "Reveal Config Vars" in the "Config Vars" section.
 
-- Enter "PORT" for the key and "8000" for the value.
+- In the field for KEY type CREDS and in the field for VALUE add the content from your credentials json file. Then click add.
+
+  - To generate the creds.json file;
+    - Go to the Google Cloud Console.
+    - Create a new project or select an existing one.
+    - Enable the Google Sheets API in the project.
+    - Go to the "Credentials" page and click "Create credentials", then select "Service account key".
+    - Select "New service account", give it a name, and select "JSON" as the key type.
+    - Click "Create" to download the JSON file with the credentials.
+    - Move the downloaded JSON file to the root directory of your project and rename it to creds.json.
+
+- In the config vars, also enter "PORT" for the second key and "8000" for the value.
 
 - Scroll down to the "Buildpacks" section, and select "Add". Add the "Python" buildpack.
 
