@@ -685,6 +685,12 @@ def display_books():
         # get all the records from the sheet
         records = SHEET.get_all_records()
 
+        # if no books in the database
+        if not records:
+            print("No books in the database.")
+            input("Press Enter to continue.")
+            return
+
         # format data for tabulate
         data = [[record['Title'],
                  record['Author'],
