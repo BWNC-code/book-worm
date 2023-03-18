@@ -198,13 +198,30 @@ def add_book():
                 elif i == 2 and value == "":
                     book.append("")
                     break
+                elif i in [1, 3] and value == "":
+                    while True:
+                        choice = input(
+                                f"No {field} entered. Add as 'Unknown'? (y/n):"
+                                )
+                        if choice.lower() == 'n':
+                            break
+                        elif choice.lower() == 'y':
+                            value = "Unknown"
+                            break
+                        else:
+                            cprint("Invalid choice. Please enter 'y' or 'n'.",
+                                   "red")
+                    if not value:
+                        continue
+                    book.append(value)
+                    break
                 elif len(value) >= 2 and value.replace(" ", "").isalnum():
                     book.append(value)
                     break
                 else:
                     print(
-                        f"Invalid {field}. Minimum 2 alphanumeric characters."
-                        )
+                        f"Invalid {field}. Minimum 2 characters, alphanumeric."
+                    )
         # add the book to the sheet
         try:
             SHEET.append_row(book)
