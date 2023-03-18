@@ -260,13 +260,11 @@ def add_book_isbn():
     while True:
         print("\033[2J\033[H")
         cprint("ADD BOOK BY ISBN", "green", attrs=["bold"])
-        print("Enter 'q' at any time to quit\n")
-
-        isbn = input("Enter the book's ISBN: ")
-        if isbn == 'q':
-            return
+        print("Press Ctrl+C at any time to cancel.\n")
 
         try:
+            isbn = input("Enter the book's ISBN: ")
+
             # Call Google Books API to retrieve book details
             url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
             response = requests.get(url, timeout=10)
@@ -280,29 +278,36 @@ def add_book_isbn():
             year = book_data.get("publishedDate", "Unknown")[:4]
             genres = ", ".join(book_data.get("categories", ["Unknown"]))
 
-            # Add the book to the sheet
-            SHEET.append_row([title, authors, year, genres])
-
             # Print out the information
-            print(f"{title} by {authors} added successfully!")
-            time.sleep(2)
+            print(f"\nTitle: {title}")
+            print(f"Authors: {authors}")
+            print(f"Year: {year}")
+            print(f"Genres: {genres}")
 
-            # ask user if they want to add another book
+            # Ask user if they want to add the book
             while True:
-                choice = input("Do you want to add another book? (y/n): ")
+                choice = input("\nDo you want to add this book? (y/n): ")
                 if choice.lower() == 'n':
                     return
                 elif choice.lower() == 'y':
-                    break
+                    # Add the book to the sheet
+                    SHEET.append_row([title, authors, year, genres])
+
+                    # Print out the success message
+                    print(f"\n{title} by {authors} added successfully!")
+                    time.sleep(2)
                 else:
                     cprint("Invalid choice. Please enter 'y' or 'n'.", "red")
-
+        except KeyboardInterrupt:
+            print("\nCancelled by user.")
+            time.sleep(2)
+            return
         except requests.exceptions.HTTPError:
-            print("Book not found")
+            print("\nBook not found")
             time.sleep(2)
             continue
         except KeyError:
-            print("Invalid ISBN. Please try again.")
+            print("\nInvalid ISBN. Please try again.")
             time.sleep(2)
             continue
 
@@ -409,7 +414,7 @@ def remove_book_isbn():
             sheet = SHEET.get_all_values()
             for row in sheet:
                 if title == row[0]:
-                    SHEET.delete_row(sheet.index(row) + 1)
+                    SHEET.delete_rows(sheet.index(row) + 1)
                     break
             print("Book removed successfully!")
             time.sleep(2)
