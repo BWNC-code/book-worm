@@ -49,23 +49,31 @@ def create_user():
             cprint("CREATE A NEW USER", "green", attrs=["bold"])
             print(" ")
             cprint("PRESS CTRL+C TO CANCEL", "green", attrs=["bold"])
-            username = input("Enter a username: \n")
+            username = input("Enter a username "
+                             "(min 4 characters): \n")
             if len(username) < 4:
                 print("Username must have at least 4 characters."
                       " Please try again.")
                 time.sleep(2)
                 continue
-            password = input("Password: \n")
-            confirm_password = input("Confirm password: \n")
-            if len(password) < 8:
-                print("Password must have at least 8 characters."
-                      " Please try again.")
-                time.sleep(2)
-            elif password != confirm_password:
-                print("Passwords do not match. Please try again.")
-                time.sleep(2)
-            else:
-                break
+            password = None
+            confirm_password = None
+            while (password is None or confirm_password is None or
+                   len(password) < 8 or password != confirm_password):
+                password = input(
+                    "Password (min 8 characters): \n"
+                    )
+                if len(password) < 8:
+                    print("Password must have at least 8 characters."
+                          " Please try again.")
+                    time.sleep(2)
+                    continue
+                confirm_password = input("Confirm password: \n")
+                if password != confirm_password:
+                    print("Passwords do not match. Please try again.")
+                    time.sleep(2)
+                    continue
+            break
     except (KeyboardInterrupt, EOFError):
         print("\nUser creation cancelled.")
         time.sleep(2)
