@@ -1,5 +1,6 @@
 """import required libraries"""
 import time
+import getpass
 import requests
 import gspread
 from google.oauth2.service_account import Credentials
@@ -8,7 +9,6 @@ from inquirer import prompt, List
 from inquirer.themes import GreenPassion
 from tabulate import tabulate
 import argon2
-import getpass
 from gspread.exceptions import APIError
 from googleapiclient.errors import HttpError
 
@@ -264,6 +264,10 @@ def add_book_isbn():
 
         try:
             isbn = input("Enter the book's ISBN: ")
+            if isbn == "":
+                print("Please enter a valid ISBN")
+                time.sleep(2)
+                continue
 
             # Call Google Books API to retrieve book details
             url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
