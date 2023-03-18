@@ -334,38 +334,44 @@ def add_book_menu():
             time.sleep(2)
 
 
-# define the remove_book function
 def remove_book():
     """
     Remove book from database
     """
-    while True:
-        print("\033[2J\033[H")
-        cprint("REMOVE BOOK FROM DATABASE", "green", attrs=["bold"])
-        title = input("Enter the title of the book you want to remove\n"
-                      "(q to return to main menu): ")
-        if title == 'q':
-            return
-        try:
-            # find the book in the sheet
-            cell = SHEET.find(title)
-            # remove the book from the sheet
-            SHEET.delete_rows(cell.row)
-            print("Book removed successfully!")
-            time.sleep(2)
+    try:
+        while True:
+            print("\033[2J\033[H")
+            cprint("REMOVE BOOK FROM DATABASE", "green", attrs=["bold"])
+            print(" ")
+            cprint("PRESS CTRL+C TO RETURN TO MAIN MENU", "green",
+                   attrs=["bold"])
+            title = input("Enter the title of the book you want to remove\n")
+            try:
+                # find the book in the sheet
+                cell = SHEET.find(title)
+                # remove the book from the sheet
+                SHEET.delete_rows(cell.row)
+                print("Book removed successfully!")
+                time.sleep(2)
 
-            # ask user if they want to remove another book
-            while True:
-                choice = input("Do you want to remove another book? (y/n): ")
-                if choice.lower() == 'n':
-                    return
-                elif choice.lower() == 'y':
-                    break
-                else:
-                    cprint("Invalid choice. Please enter 'y' or 'n'.", "red")
-        except AttributeError:
-            print("The book is not in the database. Please try again.")
-            time.sleep(2)
+                # ask user if they want to remove another book
+                while True:
+                    choice = input(
+                        "Do you want to remove another book? (y/n): "
+                        )
+                    if choice.lower() == 'n':
+                        return
+                    elif choice.lower() == 'y':
+                        break
+                    else:
+                        cprint(
+                            "Invalid choice. Please enter 'y' or 'n'.",
+                            "red")
+            except gspread.exceptions.CellNotFound:
+                print("The book is not in the database. Please try again.")
+                time.sleep(2)
+    except KeyboardInterrupt:
+        print("Remove book operation canceled.")
 
 
 def remove_book_isbn():
@@ -373,15 +379,14 @@ def remove_book_isbn():
     Look up book details using an ISBN and remove the book from the database
     """
     while True:
-        print("\033[2J\033[H")
-        cprint("REMOVE BOOK BY ISBN", "green", attrs=["bold"])
-        print("Enter 'q' at any time to quit\n")
-
-        isbn = input("Enter the book's ISBN: ")
-        if isbn == 'q':
-            return
-
         try:
+            print("\033[2J\033[H")
+            cprint("REMOVE BOOK BY ISBN", "green", attrs=["bold"])
+            print("Enter 'Ctrl+C' at any time to quit\n")
+
+            isbn = input("Enter the book's ISBN: ")
+            if not isbn:
+                continue
             # Call Google Books API to retrieve book details
             url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
             response = requests.get(url, timeout=10)
@@ -419,6 +424,10 @@ def remove_book_isbn():
             print("Invalid ISBN. Please try again.")
             time.sleep(2)
             continue
+        except KeyboardInterrupt:
+            print("Remove book operation cancelled.")
+            time.sleep(2)
+            return
 
 
 def remove_book_menu():
