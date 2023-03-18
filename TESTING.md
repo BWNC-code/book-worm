@@ -19,20 +19,20 @@ Expected Output:
 Test Steps:
 
 1. Select "Add book" from the menu
-2. Enter invalid book details (e.g. " " for Title, " " for Author, "abcd" for Year, and " " for Genre)
+2. Enter invalid book details (e.g. " " for Title, "abcd" for Year)
 3. Press Enter
 
 Expected Output:
 
-- The message "Invalid input. Please try again." should be displayed
-- The program should prompt the user to try again or return to the main menu
+- The message "Invalid {field}. Minimum 2 characters, alphanumeric." should be displayed
+- The program should prompt the user to try again
 
 ## Test Case 3: Valid user input for adding a book by ISBN
 
 Test Steps:
 
 1. Select "Add book by ISBN" from the menu
-2. Enter a valid ISBN (e.g. "9780743273565" for "To Kill a Mockingbird" by Harper Lee)
+2. Enter a valid ISBN (e.g. "9780743273565" for "The Great Gatsby" by F. Scott Fitzgerald)
 3. Press Enter
 
 Expected Output:
@@ -54,7 +54,7 @@ Test Steps:
 
 Expected Output:
 
-- The message "Book not found. Please try again." should be displayed
+- The message "Invalid ISBN. Please try again." should be displayed
 - The program should prompt the user to try again
 
 ## Test Case 5: Valid user input for removing a book by title
@@ -207,30 +207,30 @@ Expected Output:
 - The message "No books found with that author. Please try again." should be displayed
 - The program should prompt the user to try again or return to the main menu
 
-## Test Case 17: Valid user input for searching books by author
+## Test Case 17: Valid user input for searching books by genre
 
 Test Steps:
 
-1. Select "Search by author" from the menu
-2. Enter the name of an existing author in the library
+1. Select "Search by genre" from the menu
+2. Enter the name of an existing genre in the library
 3. Press Enter
 
 Expected Output:
 
-- The book(s) with matching author should be displayed with their details (title, author, year, genre)
+- The book(s) with matching genre should be displayed with their details (title, author, year, genre)
 - The program should prompt the user whether they want to search for another book or return to the main menu
 
-## Test Case 18: Invalid user input for searching books by author
+## Test Case 18: Invalid user input for searching books by genre
 
 Test Steps:
 
-1. Select "Search by author" from the menu
-2. Enter a non-existing author in the library
+1. Select "Search by genre" from the menu
+2. Enter a non-existing genre in the library
 3. Press Enter
 
 Expected Output:
 
-- The message "No books found with that author. Please try again." should be displayed
+- The message "No books found with that genre. Please try again." should be displayed
 - The program should prompt the user to try again or return to the main menu
 
 ## Test Case 19: Valid user input for viewing all books
@@ -249,7 +249,7 @@ Expected Output:
 
 Test Steps:
 
-1. Select "Quit" from the menu
+1. Select "Quit" from the main menu
 2. Press Enter
 
 Expected Output:
